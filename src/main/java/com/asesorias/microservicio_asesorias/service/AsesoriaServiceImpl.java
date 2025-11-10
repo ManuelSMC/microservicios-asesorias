@@ -19,27 +19,25 @@ public class AsesoriaServiceImpl implements AsesoriaService {
 
     @Override
     public List<Asesoria> getAll() {
-        // Obtener todos los usuarios (administradores)
         return asesoriaRepository.findAll();
     }
 
     @Override
     public Asesoria getById(Integer id) {
-        // Visualizar un usuario por ID
         return asesoriaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Asesoria no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Asesoría no encontrada con ID: " + id));
     }
 
     @Override
     public Asesoria create(Asesoria asesoria) {
-        if (asesoria.getNombre() == null || asesoria.getDescripcion() == null) {
-            throw new IllegalArgumentException("Faltan datos obligatorios: nombre, descripcion o status");
+        // Validación de campos requeridos
+        if (asesoria.getTema() == null || asesoria.getDescripcion() == null) {
+            throw new IllegalArgumentException("Faltan datos obligatorios: tema y descripción");
         }
 
         asesoria.setStatus(true);
 
-        Asesoria nuevo = asesoriaRepository.save(asesoria);
-        return nuevo;
+        return asesoriaRepository.save(asesoria);
     }
 
     @Override
@@ -49,30 +47,35 @@ public class AsesoriaServiceImpl implements AsesoriaService {
         if (!asesoriaOpt.isPresent()) {
             return null;
         }
-        
+
         Asesoria asesoria = asesoriaOpt.get();
-        
-        if (asesoriaDTO.getNombre() != null) {
-            asesoria.setNombre(asesoriaDTO.getNombre());
+
+        // Actualizamos los campos solo si no vienen nulos
+        if (asesoriaDTO.getTema() != null) {
+            asesoria.setTema(asesoriaDTO.getTema());
         }
         if (asesoriaDTO.getDescripcion() != null) {
             asesoria.setDescripcion(asesoriaDTO.getDescripcion());
         }
+        if (asesoriaDTO.getLugar() != null) {
+            asesoria.setLugar(asesoriaDTO.getLugar());
+        }
+        if (asesoriaDTO.getModalidad() != null) {
+            asesoria.setModalidad(asesoriaDTO.getModalidad());
+        }
+        if (asesoriaDTO.getHoraInicio() != null) {
+            asesoria.setHoraInicio(asesoriaDTO.getHoraInicio());
+        }
+        if (asesoriaDTO.getHoraFin() != null) {
+            asesoria.setHoraFin(asesoriaDTO.getHoraFin());
+        }
+        if (asesoriaDTO.getFechaCreacion() != null) {
+            asesoria.setFechaCreacion(asesoriaDTO.getFechaCreacion());
+        }
         if (asesoriaDTO.getStatus() != null) {
             asesoria.setStatus(asesoriaDTO.getStatus());
         }
-        
-        /*if (asesoriaDTO.getProgramasEducativosIds() != null) {
-            asesoria.getProgramasEducativos().clear();
-            
-            for (Integer programaId : asesoriaDTO.getProgramasEducativosIds()) {
-                UsuarioProgramaEducativo upe = new UsuarioProgramaEducativo();
-                upe.setUsuario(asesoria);
-                upe.setProgramaEducativoId(programaId);
-                asesoria.getProgramasEducativos().add(upe);
-            }
-        }*/
-        
+
         return asesoriaRepository.save(asesoria);
     }
 
@@ -82,7 +85,7 @@ public class AsesoriaServiceImpl implements AsesoriaService {
         Optional<Asesoria> asesoriaOpt = asesoriaRepository.findById(id);
         if (asesoriaOpt.isPresent()) {
             Asesoria asesoria = asesoriaOpt.get();
-            asesoria.setStatus(false);  
+            asesoria.setStatus(false);
             return asesoriaRepository.save(asesoria);
         }
         return null;
@@ -97,6 +100,6 @@ public class AsesoriaServiceImpl implements AsesoriaService {
             asesoria.setStatus(true);
             return asesoriaRepository.save(asesoria);
         }
-        return null;  
+        return null;
     }
 }
